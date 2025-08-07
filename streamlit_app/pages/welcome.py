@@ -17,8 +17,15 @@ def main():
     connection, cursor = connect_to_db()
 
     skus = cursor.fetchall()
-
     column_names = [i[0] for i in cursor.description]
+    rename_columns = {
+        "sku_id": "SKU ID",
+        "name": "Name",
+        "description": "Description",
+        "quantity": "Quantity",
+        "location": "Location"
+    }
+    column_names = [rename_columns.get(col, col.replace('_', ' ').title()) for col in column_names]
 
     main_table = pd.DataFrame(skus, columns = column_names)
     
