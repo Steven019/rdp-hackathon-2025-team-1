@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+import pandas as pd
 
 import streamlit as st
 
@@ -17,7 +18,9 @@ def main():
 
     skus = cursor.fetchall()
 
-    st.markdown(skus)
+    main_table = pd.DataFrame(skus)
+
+    st.table(main_table)
 
     connection.close()
 
