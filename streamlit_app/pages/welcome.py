@@ -18,8 +18,10 @@ def main():
 
     skus = cursor.fetchall()
 
-    main_table = pd.DataFrame(skus)
+    column_names = [i[0] for i in cursor.description]
 
+    main_table = pd.DataFrame(skus, columns = column_names)
+    
     st.table(main_table)
 
     connection.close()
