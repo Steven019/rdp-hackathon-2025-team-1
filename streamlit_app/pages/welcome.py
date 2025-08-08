@@ -8,27 +8,33 @@ import streamlit as st
 def connect_to_db():
     connection = sqlite3.connect('./db/warehouse_data.db')
     c = connection.cursor()
-    c.execute('SELECT * FROM skus')
-    #connection.commit()
     return connection, c
 
 
 def main():
+    st.set_page_config(layout="wide")
     connection, cursor = connect_to_db()
 
-    skus = cursor.fetchall()
+    cursor.execute('SELECT s.sku_id, s.product_name, s.product_number, s.destination, s.pallets, s.weight_lbs,'\
+                   'ds.staging_lane, ds.days_of_service, ds.dock_location, ds.last_refresh from skus s JOIN dock_status ds where s.sku_id = ds.sku_id')
+    joined_table = cursor.fetchall()
+
     column_names = [i[0] for i in cursor.description]
     rename_columns = {
         "sku_id": "SKU ID",
         "name": "Name",
         "description": "Description",
         "quantity": "Quantity",
-        "location": "Location"
+        "location": "Location",
+        "staging_lane": "Lane",
+        "days_of_service": "Days of Service",
+        "dock_location": "Dock Location",
+        "last_refresh": "Last Refresh"
     }
     column_names = [rename_columns.get(col, col.replace('_', ' ').title()) for col in column_names]
 
-    main_table = pd.DataFrame(skus, columns = column_names)
-    
+    main_table = pd.DataFrame(joined_table, columns = column_names)
+
     st.table(main_table)
 
     connection.close()
