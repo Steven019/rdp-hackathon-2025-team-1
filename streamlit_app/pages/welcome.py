@@ -41,6 +41,20 @@ def main():
 
     main_table = pd.DataFrame(joined_table, columns = column_names)
 
+    #st.text_input("Search by",width=500)
+    column_select = st.multiselect("Search in column", options=column_names, width=400)
+    item_searching = st.text_input("Search for",width=400)
+
+    if st.button("Search"):
+        data = main_table[column_select]
+        print(data)
+
+        if item_searching in data:
+            print("Cool Times")
+        else:
+            print("Bad Times")
+        pass
+
     st.dataframe(main_table, hide_index=True)
 
     connection.close()
