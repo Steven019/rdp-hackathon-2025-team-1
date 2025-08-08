@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
-import pandas as pd
 
+import pandas as pd
 import streamlit as st
 
 
@@ -76,3 +76,8 @@ def main():
 
 
 main()
+
+
+st.sidebar.header('Select Facility')
+
+selected_facility = st.sidebar.selectbox('Facility', ['Lebanon, Pa','Orlando, Fl', 'Morrow, Ga', ])
