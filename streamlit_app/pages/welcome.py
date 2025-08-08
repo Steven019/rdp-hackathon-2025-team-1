@@ -54,14 +54,18 @@ def main():
             if isinstance(match_row, pd.DataFrame):
                 match_row = match_row.any(axis=1)
             filtered_table = filtered_table[match_row]
-            st.success(f"Found {filtered_table.shape[0]} matching rows.")
+            num_matches = filtered_table.shape[0]
+            if num_matches < 1:
+                st.warning(f"Found no matching rows. Please check your search.")
+            else:
+                st.success(f"Found {num_matches} matching rows.")
         else:
             st.warning("Please select at least one column and enter a search term.")
         st.dataframe(filtered_table, hide_index=True)
     else:
         st.dataframe(main_table, hide_index=True)
 
-    st.dataframe(main_table, hide_index=True)
+    #st.dataframe(main_table, hide_index=True)
 
     connection.close()
 
