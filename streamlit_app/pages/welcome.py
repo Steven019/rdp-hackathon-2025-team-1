@@ -13,6 +13,12 @@ def connect_to_db():
 
 def main():
     st.set_page_config(layout="wide")
+
+    st.title("Temp Title")
+
+    st.header("A Description of the Program")
+
+
     connection, cursor = connect_to_db()
 
     cursor.execute('SELECT s.sku_id, s.product_name, s.product_number, s.destination, s.pallets, s.weight_lbs,'\
@@ -35,7 +41,7 @@ def main():
 
     main_table = pd.DataFrame(joined_table, columns = column_names)
 
-    st.table(main_table)
+    st.dataframe(main_table, hide_index=True)
 
     connection.close()
 
