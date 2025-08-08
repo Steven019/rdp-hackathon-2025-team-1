@@ -229,3 +229,17 @@ if main_table is not None and 'Days of Service' in main_table.columns:
 else:
     st.sidebar.write("No data available for critical SKUs.")
     #
+
+if main_table is not None and 'Dock Aging Hours' in main_table.columns:
+    critical_skus = main_table[main_table['Dock Aging Hours'] >= 6]
+    st.sidebar.subheader("SKUs with at least 6 hours of Dock Aging")
+    if not critical_skus.empty:
+        for _, row in critical_skus.iterrows():
+            st.sidebar.write(
+                f":red[:material/Warning:] {row.get('Product Name', '')}, SKU ID: {row.get('SKU ID', '')}, Dock Aging Hours: {row['Dock Aging Hours']}"
+            )
+    else:
+        st.sidebar.write("No critical SKUs found.")
+else:
+    st.sidebar.write("No data available for critical SKUs.")
+    #
