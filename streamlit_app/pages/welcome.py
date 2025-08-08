@@ -14,9 +14,9 @@ def connect_to_db():
 def main():
     st.set_page_config(layout="wide")
 
-    st.title("Temp Title")
+    st.title("GSC Dock Status Display")
 
-    st.header("A Description of the Program")
+    st.subheader("This program allows you to check on the status of items on docks for different facilities.")
 
 
     connection, cursor = connect_to_db()
