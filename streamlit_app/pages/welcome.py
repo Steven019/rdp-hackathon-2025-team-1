@@ -46,24 +46,29 @@ def main():
     item_searching = st.text_input("Search for", width=400)
 
     filtered_table = main_table.copy()
+
+    def days_under_seven(val):
+        color = 'red' if val < 3 else ''
+        return f'background-color: {color}'
+
+    show_main = True
     if st.button("Search"):
         if column_select and item_searching:
-
-            match_row = filtered_table[column_select].apply(lambda row: row.astype(str).str.contains(item_searching, case=False, na=False), axis=1)
-
-            if isinstance(match_row, pd.DataFrame):
-                match_row = match_row.any(axis=1)
-            filtered_table = filtered_table[match_row]
+            mask = filtered_table[column_select].apply(lambda row: row.astype(str).str.contains(item_searching, case=False, na=False), axis=1)
+            if isinstance(mask, pd.DataFrame):
+                mask = mask.any(axis=1)
+            filtered_table = filtered_table[mask]
             num_matches = filtered_table.shape[0]
             if num_matches < 1:
-                st.warning(f"Found no matching rows. Please check your search.")
+                st.warning(f"Found no matching rows. Showing main table.")
             else:
                 st.success(f"Found {num_matches} matching rows.")
+                st.dataframe(filtered_table.style.applymap(days_under_seven, subset=['Days of Service']))
+                show_main = False
         else:
             st.warning("Please select at least one column and enter a search term.")
-        st.dataframe(filtered_table, hide_index=True)
-    else:
-        st.dataframe(main_table, hide_index=True)
+    if show_main:
+        st.dataframe(main_table.style.applymap(days_under_seven, subset=['Days of Service']))
 
     #st.dataframe(main_table, hide_index=True)
 
