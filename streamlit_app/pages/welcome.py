@@ -142,7 +142,7 @@ elif view_all_critical_main:
         main_table_btn = None
 
     if main_table_btn is not None and 'Days of Service' in main_table_btn.columns:
-        critical_skus_main = main_table_btn[main_table_btn['Days of Service'] < 2]
+        critical_skus_main = main_table_btn[(main_table_btn['Days of Service'] < 2) | (main_table_btn['Dock Aging Hours'] >= 6)]
         st.subheader("All Critical SKUs")
         st.dataframe(critical_skus_main)
         # CSV download button for critical SKUs
