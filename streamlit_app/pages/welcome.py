@@ -37,6 +37,13 @@ def create_data_table():
 
     return main_table, column_names
 
+def days_under_two(val):
+    color = 'red' if val < 2 else ''
+    return f'background-color: {color}'
+
+def highlight_dock_aging(val):
+        color = 'yellow' if val >= 6 else ''
+        return f'background-color: {color}'
 
 def main():
     st.set_page_config(layout="wide")
@@ -61,14 +68,6 @@ def main():
     with right_col:
         sort_col = st.selectbox("Sort by column", options=column_names, key="sort_col")
         sort_asc = st.radio("Sort order", ["Ascending", "Descending"], index=0, key="sort_order")
-
-    def days_under_two(val):
-        color = 'red' if val < 2 else ''
-        return f'background-color: {color}'
-    
-    def highlight_dock_aging(val):
-        color = 'yellow' if val >= 6 else ''
-        return f'background-color: {color}'
 
     # Use session state to persist filtered results
     if 'filtered_table' not in st.session_state:
@@ -108,9 +107,6 @@ def main():
     styled_table = table_to_show.style.applymap(days_under_two, subset=['Days of Service'])
     styled_table = styled_table.applymap(highlight_dock_aging, subset=['Dock Aging Hours'])
     st.dataframe(styled_table)
-
-
-    #st.dataframe(main_table, hide_index=True)
 
 
 # Store critical_clicked in session state for page logic
@@ -168,9 +164,6 @@ elif view_all_critical_main:
         with right_col:
             sort_col = st.selectbox("Sort by column", options=column_names, key="sort_col")
             sort_asc = st.radio("Sort order", ["Ascending", "Descending"], index=0, key="sort_order")
-        def days_under_two(val):
-            color = 'red' if val < 2 else ''
-            return f'background-color: {color}'
         # Use session state to persist filtered results
         if 'filtered_table' not in st.session_state:
             st.session_state['filtered_table'] = main_table_btn.copy()
@@ -200,7 +193,9 @@ elif view_all_critical_main:
         ascending = True if sort_asc == "Ascending" else False
         table_to_show = table_to_show.sort_values(by=sort_col, ascending=ascending)
         st.subheader("Main Table")
-        st.dataframe(table_to_show.style.applymap(days_under_two, subset=['Days of Service']))
+        styled_table = table_to_show.style.applymap(days_under_two, subset=['Days of Service'])
+        styled_table = styled_table.applymap(highlight_dock_aging, subset=['Dock Aging Hours'])
+        st.dataframe(styled_table)
     else:
         st.warning("No data available for critical SKUs.")
 else:
@@ -242,4 +237,3 @@ if main_table is not None and 'Dock Aging Hours' in main_table.columns:
         st.sidebar.write("No critical SKUs found.")
 else:
     st.sidebar.write("No data available for critical SKUs.")
-    #
