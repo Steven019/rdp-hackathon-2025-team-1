@@ -159,6 +159,10 @@ elif view_all_critical_main:
         )
         st.markdown("---")
 
+        # Home button below critical table
+        if st.button('Home', key='home_btn_below_critical'):
+            st.experimental_rerun()
+
         column_names = list(main_table_btn.columns)
         left_col, right_col = st.columns([2,1])
         with left_col:
