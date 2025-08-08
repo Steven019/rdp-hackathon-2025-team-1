@@ -66,7 +66,7 @@ def main():
         color = 'red' if val < 2 else ''
         return f'background-color: {color}'
     
-    def high_dock_aging_alert(val):
+    def highlight_dock_aging(val):
         color = 'yellow' if val >= 6 else ''
         return f'background-color: {color}'
 
@@ -105,7 +105,9 @@ def main():
     ascending = True if sort_asc == "Ascending" else False
     table_to_show = table_to_show.sort_values(by=sort_col, ascending=ascending)
 
-    st.dataframe(table_to_show.style.applymap(days_under_two, subset=['Days of Service']))
+    styled_table = table_to_show.style.applymap(days_under_two, subset=['Days of Service'])
+    styled_table = styled_table.applymap(highlight_dock_aging, subset=['Dock Aging Hours'])
+    st.dataframe(styled_table)
 
 
     #st.dataframe(main_table, hide_index=True)
@@ -244,3 +246,4 @@ if main_table is not None and 'Days of Service' in main_table.columns:
         st.sidebar.write("No critical SKUs found.")
 else:
     st.sidebar.write("No data available for critical SKUs.")
+    #

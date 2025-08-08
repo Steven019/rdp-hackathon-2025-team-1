@@ -12,8 +12,6 @@ def _configure_logging() -> None:
 
 
 def main() -> None:
-    if st.sidebar.button("Home"):
-        st.switch_page("pages/welcome.py")
 
     welcome = st.Page("pages/welcome.py", title="Welcome", icon=":material/home:", default=True)
 
