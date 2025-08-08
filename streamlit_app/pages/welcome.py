@@ -22,7 +22,7 @@ def main():
     connection, cursor = connect_to_db()
 
     cursor.execute('SELECT s.sku_id, s.product_name, s.product_number, s.destination, s.pallets, s.weight_lbs,'\
-                   'ds.staging_lane, ds.days_of_service, ds.dock_location, ds.last_refresh from skus s JOIN dock_status ds where s.sku_id = ds.sku_id')
+                   'ds.staging_lane, ds.days_of_service, ds.dock_aging_hours, ds.last_refresh from skus s JOIN dock_status ds where s.sku_id = ds.sku_id')
     joined_table = cursor.fetchall()
 
     column_names = [i[0] for i in cursor.description]
@@ -34,7 +34,7 @@ def main():
         "location": "Location",
         "staging_lane": "Lane",
         "days_of_service": "Days of Service",
-        "dock_location": "Dock Location",
+        "dock_aging_hours": "Dock Aging Hours",
         "last_refresh": "Last Refresh"
     }
     column_names = [rename_columns.get(col, col.replace('_', ' ').title()) for col in column_names]
@@ -55,6 +55,10 @@ def main():
 
     def days_under_two(val):
         color = 'red' if val < 2 else ''
+        return f'background-color: {color}'
+    
+    def high_dock_aging_alert(val):
+        color = 'yellow' if val >= 6 else ''
         return f'background-color: {color}'
 
     # Use session state to persist filtered results
