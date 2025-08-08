@@ -10,15 +10,7 @@ def connect_to_db():
     c = connection.cursor()
     return connection, c
 
-
-def main():
-    st.set_page_config(layout="wide")
-
-    st.title("GSC Dock Status Display")
-
-    st.subheader("This program allows you to check on the status of items on docks for different facilities.")
-
-
+def create_data_table():
     connection, cursor = connect_to_db()
 
     cursor.execute('SELECT s.sku_id, s.product_name, s.product_number, s.destination, s.pallets, s.weight_lbs,'\
@@ -41,6 +33,19 @@ def main():
 
     main_table = pd.DataFrame(joined_table, columns = column_names)
 
+    connection.close()
+
+    return main_table, column_names
+
+
+def main():
+    st.set_page_config(layout="wide")
+
+    st.title("GSC Dock Status Display")
+
+    st.subheader("This program allows you to check on the status of items on docks for different facilities.")
+
+    main_table, column_names = create_data_table()
     # Layout: two columns for filters, table below as wide as possible
     left_col, right_col = st.columns([2,1])
 
@@ -90,8 +95,6 @@ def main():
     if clear_clicked:
         st.session_state['filtered_table'] = main_table.copy()
         st.session_state['search_active'] = False
-            
- 
 
     # Always sort the currently filtered results
     if st.session_state.get('search_active', False):
@@ -104,10 +107,8 @@ def main():
 
     st.dataframe(table_to_show.style.applymap(days_under_two, subset=['Days of Service']))
 
+
     #st.dataframe(main_table, hide_index=True)
-
-    connection.close()
-
 
 
 # Store critical_clicked in session state for page logic
@@ -137,27 +138,8 @@ if st.session_state['critical_clicked']:
 
         
 elif view_all_critical_main:
-
     try:
-        connection, cursor = connect_to_db()
-        cursor.execute('SELECT s.sku_id, s.product_name, s.product_number, s.destination, s.pallets, s.weight_lbs,'\
-                       'ds.staging_lane, ds.days_of_service, ds.dock_location, ds.last_refresh from skus s JOIN dock_status ds where s.sku_id = ds.sku_id')
-        joined_table = cursor.fetchall()
-        column_names = [i[0] for i in cursor.description]
-        rename_columns = {
-            "sku_id": "SKU ID",
-            "name": "Name",
-            "description": "Description",
-            "quantity": "Quantity",
-            "location": "Location",
-            "staging_lane": "Lane",
-            "days_of_service": "Days of Service",
-            "dock_location": "Dock Location",
-            "last_refresh": "Last Refresh"
-        }
-        column_names = [rename_columns.get(col, col.replace('_', ' ').title()) for col in column_names]
-        main_table_btn = pd.DataFrame(joined_table, columns = column_names)
-        connection.close()
+        main_table_btn, column_names = create_data_table()
     except Exception:
         main_table_btn = None
 
